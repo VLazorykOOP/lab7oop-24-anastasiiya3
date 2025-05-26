@@ -1,0 +1,114 @@
+#include <iostream>
+#include <stdexcept>
+
+// Клас масиву
+template <typename T>
+class MyArray {
+private:
+    T* data;
+    size_t size;
+
+public:
+    // Конструктор
+    MyArray(size_t size) : size(size) {
+        data = new T[size];
+    }
+
+    // Деструктор
+    ~MyArray() {
+        delete[] data;
+    }
+
+    // Доступ до елементу за індексом
+    T& operator[](size_t index) {
+        if (index >= size) {
+            throw std::out_of_range("Index out of range");
+        }
+        return data[index];
+    }
+
+    // Отримання розміру масиву
+    size_t getSize() const {
+        return size;
+    }
+
+    // Клас ітератора
+    class Iterator {
+    private:
+        T* ptr;
+
+    public:
+        explicit Iterator(T* ptr) : ptr(ptr) {}
+
+        // Оператор розіменування
+        T& operator*() const {
+            return *ptr;
+        }
+
+        // Оператор інкременту (префіксний)
+        Iterator& operator++() {
+            ++ptr;
+            return *this;
+        }
+
+        // Оператор інкременту (постфіксний)
+        Iterator operator++(int) {
+            Iterator temp = *this;
+            ++ptr;
+            return temp;
+        }
+
+        // Оператор порівняння
+        bool operator!=(const Iterator& other) const {
+            return ptr != other.ptr;
+        }
+    };
+
+    // Методи для отримання ітераторів
+    Iterator begin() {
+        return Iterator(data);
+    }
+
+    Iterator end() {
+        return Iterator(data + size);
+    }
+};
+
+// Функція для тестування ітератора
+template <typename T>
+void testIterator(MyArray<T>& arr) {
+    std::cout << "Testing iterator for array of size " << arr.getSize() << ":\n";
+    
+    // Виведення елементів за допомогою ітератора
+    std::cout << "Array elements: ";
+    for (auto it = arr.begin(); it != arr.end(); ++it) {
+        std::cout << *it << " ";
+    }
+    std::cout << "\n\n";
+}
+
+int main() {
+    // Тестування з масивом цілих чисел
+    MyArray<int> intArray(5);
+    for (size_t i = 0; i < intArray.getSize(); ++i) {
+        intArray[i] = static_cast<int>(i) * 10;
+    }
+    testIterator(intArray);
+
+    // Тестування з масивом рядків
+    MyArray<std::string> strArray(3);
+    strArray[0] = "Hello";
+    strArray[1] = "World";
+    strArray[2] = "!";
+    testIterator(strArray);
+
+    // Тестування з масивом double
+    MyArray<double> doubleArray(4);
+    doubleArray[0] = 1.1;
+    doubleArray[1] = 2.2;
+    doubleArray[2] = 3.3;
+    doubleArray[3] = 4.4;
+    testIterator(doubleArray);
+
+    return 0;
+}
