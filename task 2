@@ -1,0 +1,61 @@
+#include <iostream>
+#include <cstring>
+
+// Функція-шаблон для сортування методом вилучення (Selection Sort)
+template <typename T>
+void selectionSort(T* array, size_t size) {
+    for (size_t i = 0; i < size - 1; ++i) {
+        size_t minIndex = i;
+        for (size_t j = i + 1; j < size; ++j) {
+            if (array[j] < array[minIndex]) {
+                minIndex = j;
+            }
+        }
+        if (minIndex != i) {
+            std::swap(array[i], array[minIndex]);
+        }
+    }
+}
+
+// Специфікація функції-шаблону для типу char*
+template <>
+void selectionSort<char*>(char** array, size_t size) {
+    for (size_t i = 0; i < size - 1; ++i) {
+        size_t minIndex = i;
+        for (size_t j = i + 1; j < size; ++j) {
+            if (strcmp(array[j], array[minIndex]) < 0) {
+                minIndex = j;
+            }
+        }
+        if (minIndex != i) {
+            std::swap(array[i], array[minIndex]);
+        }
+    }
+}
+
+// Допоміжна функція для виводу масиву
+template <typename T>
+void printArray(T* array, size_t size) {
+    for (size_t i = 0; i < size; ++i) {
+        std::cout << array[i] << " ";
+    }
+    std::cout << std::endl;
+}
+
+int main() {
+    // Приклад для числових типів
+    int intArray[] = {64, 25, 12, 22, 11};
+    size_t intSize = sizeof(intArray) / sizeof(intArray[0]);
+    selectionSort(intArray, intSize);
+    std::cout << "Sorted int array: ";
+    printArray(intArray, intSize);
+
+    // Приклад для char*
+    char* strArray[] = {(char*)"banana", (char*)"apple", (char*)"orange", (char*)"grape"};
+    size_t strSize = sizeof(strArray) / sizeof(strArray[0]);
+    selectionSort(strArray, strSize);
+    std::cout << "Sorted string array: ";
+    printArray(strArray, strSize);
+
+    return 0;
+}
