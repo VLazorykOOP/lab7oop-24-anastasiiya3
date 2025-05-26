@@ -1,0 +1,95 @@
+#include <iostream>
+#include <stdexcept>
+
+// Шаблон класу Stack
+template <typename T>
+class Stack {
+private:
+    T* data;        // Масив для зберігання елементів стеку
+    size_t capacity; // Максимальний розмір стеку
+    size_t topIndex; // Індекс верхнього елемента (вершини стеку)
+
+public:
+    // Конструктор (за замовчуванням розмір = 10)
+    Stack(size_t initialCapacity = 10) 
+        : capacity(initialCapacity), topIndex(0) {
+        data = new T[capacity];
+    }
+
+    // Деструктор (звільняє пам'ять)
+    ~Stack() {
+        delete[] data;
+    }
+
+    // Додавання елемента у стек (push)
+    void push(const T& value) {
+        if (topIndex == capacity) {
+            // Якщо стек заповнений, збільшуємо його розмір
+            resize(capacity * 2);
+        }
+        data[topIndex++] = value;
+    }
+
+    // Видалення елемента зі стеку (pop)
+    void pop() {
+        if (isEmpty()) {
+            throw std::out_of_range("Stack is empty!");
+        }
+        topIndex--;
+    }
+
+    // Перевірка, чи стек порожній
+    bool isEmpty() const {
+        return topIndex == 0;
+    }
+
+    // Отримання верхнього елемента (без видалення)
+    T& top() {
+        if (isEmpty()) {
+            throw std::out_of_range("Stack is empty!");
+        }
+        return data[topIndex - 1];
+    }
+
+    // Отримання поточного розміру стеку
+    size_t size() const {
+        return topIndex;
+    }
+
+private:
+    // Зміна розміру масиву (приватний метод)
+    void resize(size_t newCapacity) {
+        T* newData = new T[newCapacity];
+        for (size_t i = 0; i < topIndex; ++i) {
+            newData[i] = data[i];
+        }
+        delete[] data;
+        data = newData;
+        capacity = newCapacity;
+    }
+};
+
+// Приклад використання
+int main() {
+    // Створення стеку для int
+    Stack<int> intStack;
+    intStack.push(10);
+    intStack.push(20);
+    intStack.push(30);
+
+    std::cout << "Top element: " << intStack.top() << std::endl; // 30
+    intStack.pop();
+    std::cout << "Top element after pop: " << intStack.top() << std::endl; // 20
+
+    // Створення стеку для char*
+    Stack<const char*> stringStack;
+    stringStack.push("Hello");
+    stringStack.push("World");
+    stringStack.push("C++");
+
+    std::cout << "Top string: " << stringStack.top() << std::endl; // C++
+    stringStack.pop();
+    std::cout << "Top string after pop: " << stringStack.top() << std::endl; // World
+
+    return 0;
+}
