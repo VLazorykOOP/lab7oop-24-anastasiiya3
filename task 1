@@ -1,0 +1,63 @@
+#include <iostream>
+#include <cstring>
+
+// Функція-шаблон для знаходження максимального значення та його кількості
+template <typename T>
+void findMaxAndCount(const T* array, size_t size, T& maxValue, size_t& count) {
+    if (size == 0) {
+        count = 0;
+        return;
+    }
+
+    maxValue = array[0];
+    count = 1;
+
+    for (size_t i = 1; i < size; ++i) {
+        if (array[i] > maxValue) {
+            maxValue = array[i];
+            count = 1;
+        } else if (array[i] == maxValue) {
+            ++count;
+        }
+    }
+}
+
+// Специфікація функції-шаблону для типу char*
+template <>
+void findMaxAndCount(const char* const* array, size_t size, const char*& maxValue, size_t& count) {
+    if (size == 0) {
+        count = 0;
+        return;
+    }
+
+    maxValue = array[0];
+    count = 1;
+
+    for (size_t i = 1; i < size; ++i) {
+        if (strcmp(array[i], maxValue) > 0) {
+            maxValue = array[i];
+            count = 1;
+        } else if (strcmp(array[i], maxValue) == 0) {
+            ++count;
+        }
+    }
+}
+
+// Приклад використання
+int main() {
+    // Приклад для числових типів
+    int intArray[] = {1, 5, 3, 5, 2};
+    int intMax;
+    size_t intCount;
+    findMaxAndCount(intArray, 5, intMax, intCount);
+    std::cout << "Max int: " << intMax << ", count: " << intCount << std::endl;
+
+    // Приклад для char*
+    const char* strArray[] = {"apple", "banana", "orange", "banana"};
+    const char* strMax;
+    size_t strCount;
+    findMaxAndCount(strArray, 4, strMax, strCount);
+    std::cout << "Max string: " << strMax << ", count: " << strCount << std::endl;
+
+    return 0;
+}
